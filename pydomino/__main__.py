@@ -16,6 +16,24 @@ if __name__ == '__main__':
     print("Jouons une partie de pydomino!\n")
     # TODO: À compléter
     # choix du type de partie
+    entree = True
+    while entree:
+        print("Voulez-vous jouer ?")
+        print("\t1. une partie de dominos sans pioche?")
+        print("\t2. une partie de dominos avec pioche?")
+        choix = input("Entre une chiffre (entre 1 ou 2)")
+        if  choix.isnumeric():
+            if 1 <= int(choix) <= 2:
+                entree = False
+            else:
+                print("_____________  E r r e u r ______________")
+                print(" Devez entre une chiffre  (entre 1 ou 2)  ")
+                entree = True
+        else:
+            print("_____________  E r r e u r ______________")
+            print("| Devez entre une chiffre  (entre 1 ou 2) |")
+
+
     # choix du nombre de joueurs
     # instanciation d'un objet partie
     # démarrage de la partie
