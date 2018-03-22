@@ -5,7 +5,8 @@ domino sans pioche.
 
 import pydomino
 import random
-
+from pydomino.plateau import *
+from pydomino.donne import *
 
 def distribuer_dominos(nombre_joueurs):
     """
@@ -16,9 +17,31 @@ def distribuer_dominos(nombre_joueurs):
     :param nombre_joueurs: (int) Nombre de joueurs de la partie.
     :return: (list) La liste des donnes de dominos des joueurs.
     """
-    # TODO: À compléter
-
-    pass
+    #créer domino complet
+    serie = [x for x in range(7)]
+    domino_melange = []
+    for i in serie:
+        for j in range(i + 1):
+            domino_melange.append([j, i])
+    random.shuffle(domino_melange)
+    list_dominos = []
+    # dominos distribués aux joueurs
+    if nombre_joueurs == 2:
+        des_dominos1 = domino_melange[0:7]
+        des_dominos2 = domino_melange[7:14]
+        list_dominos = [des_dominos1, des_dominos2]
+    elif nombre_joueurs == 3:
+        des_dominos1 = domino_melange[0:6]
+        des_dominos2 = domino_melange[6:12]
+        des_dominos3 = domino_melange[12:18]
+        list_dominos = [des_dominos1, des_dominos2, des_dominos3]
+    elif nombre_joueurs == 4:
+        des_dominos1 = domino_melange[0:6]
+        des_dominos2 = domino_melange[6:12]
+        des_dominos3 = domino_melange[12:18]
+        des_dominos4 = domino_melange[18:24]
+        list_dominos = [des_dominos1, des_dominos2, des_dominos3, des_dominos4]
+    return list_dominos
 
 
 class Partie:
@@ -62,8 +85,11 @@ class Partie:
         Méthode statique qui affiche les instructions du jeu
 
         """
-        # TODO: À compléter
-        pass
+        """
+        print("***  Instructions   ***\n\n\n")
+        print("Le joueur {} joue en premier puisqu'il a le domino le plus fort ({})\n".format(x,y))
+        print("C'est au tour de joueur {}\n".format(y))
+        """
 
     def afficher_etat_donnes(self):
         """
@@ -242,5 +268,13 @@ class Partie:
         fin de partie, 4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
         """
 
-        # TODO: À compléter
-        pass
+        #1) affichage des instructions
+        #afficher_instructions()
+       #2) premier tour de jeu
+        #tour_du_premier_joueur(self)
+        #3) boucle pour les tours suivants, cette boucle vérifie les conditions de fin de partie
+         #       tour_du_prochain_joueur(self)
+        #4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
+          #      afficher_etat_donnes(self)
+          #     afficher_message_egalite(self, indices)
+          #      afficher_message_victoire
