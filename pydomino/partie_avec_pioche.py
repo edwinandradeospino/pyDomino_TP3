@@ -15,30 +15,30 @@ def distribuer_dominos_avec_pioche(nombre_joueurs):
         """
     # créer domino complet
     serie = [x for x in range(7)]
-    domino_complet = []
+    domino_melange = []
     for i in serie:
         for j in range(i + 1):
-            domino_complet.append([j, i])
-    domino_melange = random.shuffle(domino_complet)
+            domino_melange.append([j, i])
+    random.shuffle(domino_melange)
 
     # dominos distribués aux joueurs
     if nombre_joueurs == 2:
-        des_dominos1 = domino_melange[0:8]
-        des_dominos2 = domino_melange[8:15]
-        pioche = domino_melange[15:29]
+        des_dominos1 = domino_melange[0:7]
+        des_dominos2 = domino_melange[7:14]
+        pioche = domino_melange[14:28]
         return [des_dominos1, des_dominos2, pioche]
     if nombre_joueurs == 3:
-        des_dominos1 = domino_melange[0:7]
-        des_dominos2 = domino_melange[7:13]
-        des_dominos3 = domino_melange[13:19]
-        pioche = domino_melange[19:29]
+        des_dominos1 = domino_melange[0:6]
+        des_dominos2 = domino_melange[6:12]
+        des_dominos3 = domino_melange[12:18]
+        pioche = domino_melange[18:28]
         return [des_dominos1, des_dominos2, des_dominos3, pioche]
     if nombre_joueurs == 4:
-        des_dominos1 = domino_melange[0:7]
-        des_dominos2 = domino_melange[7:13]
-        des_dominos3 = domino_melange[13:19]
-        des_dominos4 = domino_melange[19:25]
-        pioche = domino_melange[25:29]
+        des_dominos1 = domino_melange[0:6]
+        des_dominos2 = domino_melange[6:12]
+        des_dominos3 = domino_melange[12:18]
+        des_dominos4 = domino_melange[18:24]
+        pioche = domino_melange[24:28]
         return [des_dominos1, des_dominos2, des_dominos3, des_dominos4, pioche]
 
 

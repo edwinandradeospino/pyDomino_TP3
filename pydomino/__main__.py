@@ -95,14 +95,25 @@ def cree_joueurs_partie_avec_pioche(nombre_joueurs, list_donne_joueurs):
         joueur1 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[0]),pioche)
         joueur2 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[1]),pioche)
         joueur3 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[2]),pioche)
-        return [joueur1, joueur2, joueur3, ]
+        return [joueur1, joueur2, joueur3, pioche]
     if nombre_joueurs == 4:
         pioche = list_donne_joueurs[4]
         joueur1 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[0]),pioche)
         joueur2 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[1]),pioche)
         joueur3 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[2]),pioche)
         joueur4 = PartieAvecPioche(Plateau(), Donne(list_donne_joueurs[3]),pioche)
-        return [joueur1, joueur2, joueur3, joueur4]
+        return [joueur1, joueur2, joueur3, joueur4, pioche]
+
+def cree_objets():
+    if type_de_partie() == 1:
+        list_donne_joueurs = distribuer_dominos(nombre_de_parties())
+        list_joueurs = cree_joueurs_partie(nombre_de_parties(), list_donne_joueurs)
+        return list_joueurs
+    if type_de_partie() == 2:
+        list_donne_joueurs = distribuer_dominos_avec_pioche(nombre_de_parties())
+        list_joueurs = cree_joueurs_partie_avec_pioche(nombre_de_parties(), list_donne_joueurs)
+        return list_joueurs
+
 if __name__ == '__main__':
     """
     Point d'entrée de votre programme pydomino. Dans cette fonction, il faut d'abord demander quel type de partie de
@@ -117,14 +128,11 @@ if __name__ == '__main__':
 
     # combien de joueur il veut jouer une partie
     nombre_joueurs = nombre_de_parties()
-    # créer les donnes des joueurs et instancier les objets
-    if type_partie == 1:
-        list_donne_joueurs = distribuer_dominos(nombre_joueurs)
-        list_joueurs = cree_joueurs_partie(nombre_joueurs, list_donne_joueurs)
-    if type_partie == 2:
-        list_donne_joueurs = distribuer_dominos_avec_pioche(nombre_joueurs)
-        list_joueurs = cree_joueurs_partie_avec_pioche(nombre_joueurs, list_donne_joueurs)
-    # démarrage de la partie
 
+    # créer les donnes des joueurs et instancier les objets
+    list_objets_joueur = cree_objets(type_partie, nombre_joueurs)
+
+    # démarrage de la partie
+    Partie.jouer()
 
     input('Appuyer sur ENTER pour quitter.')

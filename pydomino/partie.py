@@ -8,6 +8,7 @@ import random
 from pydomino.plateau import *
 from pydomino.donne import *
 
+
 def distribuer_dominos(nombre_joueurs):
     """
     Méthode pour créer les donnes des joueurs. Pour une partie à 2 joueurs, 7 dominos sont distribués aux joueurs. Pour
@@ -24,24 +25,23 @@ def distribuer_dominos(nombre_joueurs):
         for j in range(i + 1):
             domino_melange.append([j, i])
     random.shuffle(domino_melange)
-    list_dominos = []
+
     # dominos distribués aux joueurs
     if nombre_joueurs == 2:
         des_dominos1 = domino_melange[0:7]
         des_dominos2 = domino_melange[7:14]
-        list_dominos = [des_dominos1, des_dominos2]
+        return [des_dominos1, des_dominos2]
     elif nombre_joueurs == 3:
         des_dominos1 = domino_melange[0:6]
         des_dominos2 = domino_melange[6:12]
         des_dominos3 = domino_melange[12:18]
-        list_dominos = [des_dominos1, des_dominos2, des_dominos3]
+        return [des_dominos1, des_dominos2, des_dominos3]
     elif nombre_joueurs == 4:
         des_dominos1 = domino_melange[0:6]
         des_dominos2 = domino_melange[6:12]
         des_dominos3 = domino_melange[12:18]
         des_dominos4 = domino_melange[18:24]
-        list_dominos = [des_dominos1, des_dominos2, des_dominos3, des_dominos4]
-    return list_dominos
+        return [des_dominos1, des_dominos2, des_dominos3, des_dominos4]
 
 
 class Partie:
@@ -83,13 +83,11 @@ class Partie:
     def afficher_instructions():
         """
         Méthode statique qui affiche les instructions du jeu
-
         """
-        """
-        print("***  Instructions   ***\n\n\n")
-        print("Le joueur {} joue en premier puisqu'il a le domino le plus fort ({})\n".format(x,y))
-        print("C'est au tour de joueur {}\n".format(y))
-        """
+        fichier = open("instruction_sans_pioche.txt", "r")
+        f = fichier.read()
+        print(f)
+        fichier.closed()
 
     def afficher_etat_donnes(self):
         """
@@ -107,6 +105,7 @@ class Partie:
             int: le numéro du joueur ayant le domino le plus élevé
             domino: le domino le plus élevé de ce joueur
         """
+        cree_objets()
         # TODO: À compléter
         pass
 
@@ -123,6 +122,7 @@ class Partie:
         """
         # TODO: À compléter
         # Trouver le joueur avec le domino le plus élevé.
+
         # Afficher les informations sur le mouvement du premier joueur
         # Placer ce domino sur le plateau de jeu (en utilisant la méthode appropriée)
         # Retirer ce domino de la donne du joueur (en utilisant la méthode appropriée)
@@ -267,10 +267,12 @@ class Partie:
         instructions, 2) premier tour de jeu, 3) boucle pour les tours suivants, cette boucle vérifie les conditions de
         fin de partie, 4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
         """
-
         #1) affichage des instructions
-        #afficher_instructions()
+        Partie.afficher_instructions()
+
        #2) premier tour de jeu
+        Partie.trouver_premier_joueur()
+
         #tour_du_premier_joueur(self)
         #3) boucle pour les tours suivants, cette boucle vérifie les conditions de fin de partie
          #       tour_du_prochain_joueur(self)
