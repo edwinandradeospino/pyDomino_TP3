@@ -7,6 +7,7 @@ import pydomino
 import random
 from pydomino.plateau import *
 from pydomino.donne import *
+import codecs
 
 
 def distribuer_dominos(nombre_joueurs):
@@ -28,20 +29,14 @@ def distribuer_dominos(nombre_joueurs):
 
     # dominos distribués aux joueurs
     if nombre_joueurs == 2:
-        des_dominos1 = domino_melange[0:7]
-        des_dominos2 = domino_melange[7:14]
-        return [des_dominos1, des_dominos2]
+        donnes= [domino_melange[0:7], domino_melange[7:14]]
+        return donnes
     elif nombre_joueurs == 3:
-        des_dominos1 = domino_melange[0:6]
-        des_dominos2 = domino_melange[6:12]
-        des_dominos3 = domino_melange[12:18]
-        return [des_dominos1, des_dominos2, des_dominos3]
+        donnes = [domino_melange[0:6], domino_melange[6:12], domino_melange[12:18]]
+        return donnes
     elif nombre_joueurs == 4:
-        des_dominos1 = domino_melange[0:6]
-        des_dominos2 = domino_melange[6:12]
-        des_dominos3 = domino_melange[12:18]
-        des_dominos4 = domino_melange[18:24]
-        return [des_dominos1, des_dominos2, des_dominos3, des_dominos4]
+        donnes = [domino_melange[0:6], domino_melange[6:12], domino_melange[12:18], domino_melange[18:24]]
+        return donnes
 
 
 class Partie:
@@ -84,10 +79,13 @@ class Partie:
         """
         Méthode statique qui affiche les instructions du jeu
         """
-        fichier = open("instruction_sans_pioche.txt", "r")
-        f = fichier.read()
-        print(f)
-        fichier.closed()
+        fichier = codecs.open("instruction_sans_pioche.txt", "r","utf-8")
+        while True:
+            ligne = fichier.readline()
+            if not ligne:
+                break
+            print(ligne)
+        fichier.close()
 
     def afficher_etat_donnes(self):
         """
@@ -105,29 +103,70 @@ class Partie:
             int: le numéro du joueur ayant le domino le plus élevé
             domino: le domino le plus élevé de ce joueur
         """
-        cree_objets()
-        # TODO: À compléter
-        pass
+        # trouver joueur avec le domino le plus haut
+
+        domino_organise = sorted(zip(sorted([[[x + y], sorted([x, y], reverse=False)] for x in range(7) for y in range(x + 1)],
+                           reverse=True), sorted([i for i in range(28)], reverse=True)), reverse=True)
+
+        # chercher les dominos le plus hauts dans chaque donne
+        domino_plus_haut_chaque_donne = []
+        for donne in self.donnes:
+            domino_plus_haut_chaque_donne.append((sorted(donne, reverse=True))[0])
+
+        # chercher les indices de chaque donne
+        domino_indice = []
+        domino_joueur = []
+        for indice in range(len(domino_plus_haut_chaque_donne)):
+            for i in range(len(domino_organise)):
+                if domino_organise[i][0][1] == domino_plus_haut_chaque_donne[indice]:
+                    domino_indice.append(domino_organise[i][1])
+                    domino_joueur.append(indice + 1)
+
+        # agrouper les indices et les dominos et choisir le domino le plus haut
+        domino_le_plus_haut = sorted(zip(domino_indice, domino_plus_haut_chaque_donne, domino_joueur), reverse=True)[0]
+
+        # registre le tour du premier joueur
+        self.tour = domino_le_plus_haut[2]
+
+        #retourner la valeur du indice(joueur) et le domino le plus haut
+        return (domino_le_plus_haut[2], domino_le_plus_haut[1])
+
 
     def passer_au_prochain_joueur(self):
         """
         Méthode qui modifie l'attribut self.tour pour passer au joueur suivant.
         """
-        # TODO: À compléter
-        pass
+        self.tour += 1
+        if self.tour % len(self.donnes) == 0:
+            self.tour = len(self.donnes)
+        else:
+            self.tour = self.tour % len(self.donnes)
+
 
     def tour_du_premier_joueur(self):
         """
         Méthode qui complète les étapes du tour du premier joueur.
         """
-        # TODO: À compléter
+
         # Trouver le joueur avec le domino le plus élevé.
+        Partie.trouver_premier_joueur(self)
 
         # Afficher les informations sur le mouvement du premier joueur
+        print("Le joueur {} joue en premier puisqu'il a le domino le plus fort {}"
+              .format(Partie.trouver_premier_joueur(self)[0],
+                      Partie.trouver_premier_joueur(self)[1]))
+
         # Placer ce domino sur le plateau de jeu (en utilisant la méthode appropriée)
+        self.plateau.ajouter_a_gauche(Partie.trouver_premier_joueur(self)[1])
+
         # Retirer ce domino de la donne du joueur (en utilisant la méthode appropriée)
+        #crée un objet avec la donne deu joueur
+        domino_retire_de_donne = Donne(self.donnes[Partie.trouver_premier_joueur(self)[0]-1])
+        #le methode return la donne avec le domino retiré
+        domino_retire_de_donne.jouer(Partie.trouver_premier_joueur(self)[1])
+
         # Passer au joueur suivant (en utilisant la méthode appropriée)
-        pass
+        Partie.passer_au_prochain_joueur(self)
 
     def determiner_si_domino_peut_etre_joue(self, domino):
         """
@@ -154,8 +193,18 @@ class Partie:
         du plateau de jeu, l'état des donnes de tous les joueurs (nombre de dominos en main) et la donne du joueur qui
         doit jouer.
         """
-        # TODO: À compléter
-        pass
+        # le numéro du joueur qui doit jouer
+        print("c'est au tour du joueur {} ".format(self.tour))
+
+        #l'état du plateau de jeu
+        print("Plateau {} ".format(self.plateau))
+
+        # l'état des donnes de tous les joueurs (nombre de dominos en main)
+        for joueur in range(len(self.donnes)):
+            print("le joueur {} a {} dominos en main ".format(joueur+1, len(self.donnes[joueur])))
+
+        #la donne du joueur qui doit jouer
+        print("Donne du jouer {} : {}".format(self.tour, self.donnes[self.tour-1]))
 
     def demander_numero_domino_a_jouer(self):
         """
@@ -217,8 +266,9 @@ class Partie:
         le joueur joue un domino, et on vérifie s'il y a un gagnant, 4) s'il ne peut pas joueur, on fait passer son tour
         au joueur, finalement 4) on passe au prochain joueur (en utilisant la méthode appropriée).
         """
-        # TODO: À compléter
-        pass
+        #1) on affiche les informations de début de tour
+        Partie.afficher_informations_debut_tour(self)
+
 
     def faire_passer_joueur(self):
         """
@@ -270,12 +320,28 @@ class Partie:
         #1) affichage des instructions
         Partie.afficher_instructions()
 
-       #2) premier tour de jeu
-        Partie.trouver_premier_joueur()
+        #2) premier tour de jeu
+        Partie.tour_du_premier_joueur(self)
 
-        #tour_du_premier_joueur(self)
         #3) boucle pour les tours suivants, cette boucle vérifie les conditions de fin de partie
-         #       tour_du_prochain_joueur(self)
+        Partie.tour_du_prochain_joueur(self)
+        print("Quel domino voulez-vous jouer ?\n")
+        for i in range(len(self.donnes[self.tour - 1])):
+            print("{} : {}".format(i, self.donnes[self.tour - 1][i]))
+        entree = True
+        while entree:
+            choix = input("Entre le nombre du domino (entre 0 et {})".format(len(self.donnes[self.tour])-1))
+
+            if choix.isnumeric():
+                if 1 <= int(choix) <= len(self.donnes[self.tour])-1:
+                    entree = False
+                    return int(choix)
+                else:
+                    print(" Entrée invalidée essayez à nouveau ")
+                    entree = True
+            else:
+                print(" Entrée invalidée essayez à nouveau ")
+
         #4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
           #      afficher_etat_donnes(self)
           #     afficher_message_egalite(self, indices)

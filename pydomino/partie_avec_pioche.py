@@ -23,24 +23,14 @@ def distribuer_dominos_avec_pioche(nombre_joueurs):
 
     # dominos distribués aux joueurs
     if nombre_joueurs == 2:
-        des_dominos1 = domino_melange[0:7]
-        des_dominos2 = domino_melange[7:14]
-        pioche = domino_melange[14:28]
-        return [des_dominos1, des_dominos2, pioche]
-    if nombre_joueurs == 3:
-        des_dominos1 = domino_melange[0:6]
-        des_dominos2 = domino_melange[6:12]
-        des_dominos3 = domino_melange[12:18]
-        pioche = domino_melange[18:28]
-        return [des_dominos1, des_dominos2, des_dominos3, pioche]
-    if nombre_joueurs == 4:
-        des_dominos1 = domino_melange[0:6]
-        des_dominos2 = domino_melange[6:12]
-        des_dominos3 = domino_melange[12:18]
-        des_dominos4 = domino_melange[18:24]
-        pioche = domino_melange[24:28]
-        return [des_dominos1, des_dominos2, des_dominos3, des_dominos4, pioche]
-
+        donnes= [domino_melange[0:7], domino_melange[7:14], domino_melange[14:28]]
+        return donnes
+    elif nombre_joueurs == 3:
+        donnes = [domino_melange[0:6], domino_melange[6:12], domino_melange[12:18], domino_melange[18:28]]
+        return donnes
+    elif nombre_joueurs == 4:
+        donnes = [domino_melange[0:6], domino_melange[6:12], domino_melange[12:18], domino_melange[18:24], domino_melange[24:28]]
+        return donnes
 
 class PartieAvecPioche(pydomino.Partie):
     """

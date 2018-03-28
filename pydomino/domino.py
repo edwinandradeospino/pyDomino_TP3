@@ -51,3 +51,5 @@ class Domino:
         :return (bool): True si le chiffre key est présent dans les attributs du domino, False autrement
         """
         return key == self.premier_chiffre or key == self.deuxieme_chiffre
+
+
