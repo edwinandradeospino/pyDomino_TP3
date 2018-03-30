@@ -17,7 +17,7 @@ class Plateau:
         :return: La valeur extérieure du domino de gauche.
         """
         if self.plateau != []:
-            return self.plateau[0][0]
+            return(self.plateau[0])
         else:
             return self.plateau
 
@@ -27,7 +27,7 @@ class Plateau:
         :return: La valeur extérieure du domino de droite.
         """
         if self.plateau != []:
-            return self.plateau[-1][-1]
+            return self.plateau[-1]
         else:
             return self.plateau
 

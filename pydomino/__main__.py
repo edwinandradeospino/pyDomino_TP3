@@ -4,6 +4,7 @@ Module principal du package pydomino. C'est ce module que nous allons exécuter 
 
 from pydomino.partie import *
 from pydomino.partie_avec_pioche import *
+from pydomino.donne import *
 
 
 
@@ -64,7 +65,7 @@ def cree_donnes(type_partie, nombre_joueurs):
      :return:
     """
     if type_partie == 1:
-        une_partie = Partie(Plateau(),distribuer_dominos(nombre_joueurs))
+        une_partie = Partie(Plateau(), distribuer_dominos(nombre_joueurs))
         return une_partie
     if type_partie == 2:
         une_partie = PartieAvecPioche(Plateau(), distribuer_dominos_avec_pioche(nombre_joueurs)[:-1],

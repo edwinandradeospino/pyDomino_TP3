@@ -8,6 +8,7 @@ import random
 from pydomino.plateau import *
 from pydomino.donne import *
 import codecs
+from pydomino.domino import *
 
 
 def distribuer_dominos(nombre_joueurs):
@@ -29,15 +30,12 @@ def distribuer_dominos(nombre_joueurs):
 
     # dominos distribués aux joueurs
     if nombre_joueurs == 2:
-        donnes= [domino_melange[0:7], domino_melange[7:14]]
-        return donnes
+        return [Donne(domino_melange[0:7]), Donne(domino_melange[7:14])]
     elif nombre_joueurs == 3:
-        donnes = [domino_melange[0:6], domino_melange[6:12], domino_melange[12:18]]
-        return donnes
+        return [Donne(domino_melange[0:6]), Donne(domino_melange[6:12]), Donne(domino_melange[12:18])]
     elif nombre_joueurs == 4:
-        donnes = [domino_melange[0:6], domino_melange[6:12], domino_melange[12:18], domino_melange[18:24]]
-        return donnes
-
+        return [Donne(domino_melange[0:6]), Donne(domino_melange[6:12]), Donne(domino_melange[12:18]),
+                Donne(domino_melange[18:24])]
 
 class Partie:
     """
@@ -137,10 +135,10 @@ class Partie:
         Méthode qui modifie l'attribut self.tour pour passer au joueur suivant.
         """
         self.tour += 1
-        if self.tour % len(self.donnes) == 0:
-            self.tour = len(self.donnes)
+        if self.tour % self.donnes.__len__() == 0:
+            self.tour = self.donnes.__len__()
         else:
-            self.tour = self.tour % len(self.donnes)
+            self.tour = self.tour % self.donnes.__len__()
 
 
     def tour_du_premier_joueur(self):
@@ -160,10 +158,8 @@ class Partie:
         self.plateau.ajouter_a_gauche(Partie.trouver_premier_joueur(self)[1])
 
         # Retirer ce domino de la donne du joueur (en utilisant la méthode appropriée)
-        #crée un objet avec la donne deu joueur
-        domino_retire_de_donne = Donne(self.donnes[Partie.trouver_premier_joueur(self)[0]-1])
-        #le methode return la donne avec le domino retiré
-        domino_retire_de_donne.jouer(Partie.trouver_premier_joueur(self)[1])
+        self.donnes[Partie.trouver_premier_joueur(self)[0]-1].\
+            jouer(Partie.trouver_premier_joueur(self)[1])
 
         # Passer au joueur suivant (en utilisant la méthode appropriée)
         Partie.passer_au_prochain_joueur(self)
@@ -174,8 +170,11 @@ class Partie:
         :param domino: (Domino) Domino dont on veut savoir s'il peut être posé à une des deux extrémités du plateau
         :return: (bool) True, si le domino peut être joué, False autrement.
         """
-        # TODO: À compléter
-        pass
+        un_domino = Domino(domino[0],domino[1])
+        if (un_domino.__contains__(self.plateau[0][0]) or  un_domino.__contains__(self.plateau[-1][-1])):
+            return True
+        else:
+            return False
 
     def determiner_si_joueur_joue_ou_passe(self):
         """
@@ -184,8 +183,11 @@ class Partie:
         autrement.
         """
         # Dans la donne du joueur, y a-t-il un domino que le joueur peut joueur?
-        # TODO: À compléter
-        pass
+        for domino in self.donnes[self.tour - 1]:
+            if (self.plateau.cote_gauche() == domino[0]) or (self.plateau.cote_droit() == domino[1]):
+                return True
+        return False
+
 
     def afficher_informations_debut_tour(self):
         """
@@ -204,7 +206,7 @@ class Partie:
             print("le joueur {} a {} dominos en main ".format(joueur+1, len(self.donnes[joueur])))
 
         #la donne du joueur qui doit jouer
-        print("Donne du jouer {} : {}".format(self.tour, self.donnes[self.tour-1]))
+        print("Donne du jouer {} : {}".format(self.tour, self.donnes[self.tour - 1].__str__()))
 
     def demander_numero_domino_a_jouer(self):
         """
@@ -213,18 +215,37 @@ class Partie:
         tant que le numéro fourni n'est pas valide.
         :return: (Domino) L'objet domino associé au numéro de domino choisi.
         """
-        # TODO: À compléter
-        pass
+        print("Quel domino voulez-vous jouer ?\n")
+        for i in range(self.donnes[self.tour - 1].__len__()):
+            print("{} : {}".format(i, self.donnes[self.tour - 1][i]))
+
+        domino = []
+        entree = True
+        while entree:
+            choix = input("Entre le nombre du domino (entre 0 et {})".format(len(self.donnes[self.tour]) - 1))
+            if choix.isnumeric():
+                if 0 <= int(choix) <= len(self.donnes[self.tour]) - 1:
+                    entree = False
+                    return self.donnes[self.tour - 1].__getitem__(int(choix))
+                else:
+                    print(" Entrée invalidée essayez à nouveau ")
+                    entree = True
+            else:
+                print(" Entrée invalidée essayez à nouveau ")
+                entree = True
 
     def jouer_a_gauche_ou_a_droite(self, domino_joue):
         """
         Méthode qui est invoquée lorsque le domino choisi par le joueur peut être joué à gauche ou à droite. On demande
         ce que veut le joueur et le domino est joué selon son choix. Ce choix doit être validé par le programme.
         :param domino_joue: (Domino) Le domino à jouer
-        :return:
+        :return: bool
         """
-        # TODO: À compléter
-        pass
+        un_domino = Domino(domino_joue[0], domino_joue[1])
+        autre_domino = Domino(self.plateau.cote_gauche(), self.plateau.cote_droit())
+        if un_domino.__eq__(autre_domino):
+            return True
+        return False
 
     def jouer_a_gauche(self, domino_joue):
         """
@@ -255,19 +276,52 @@ class Partie:
         seul côté, alors le domino est joué de ce côté-là. Si le domino peut être joué des deux côtés, alors on
         demande à l'utilateur le côté où il souhaite jouer le domino (en utilisant les méthodes appropriées).
         """
-        # TODO: À compléter
-        pass
+        domino_joue = Partie.demander_numero_domino_a_jouer(self)
+
+        if Partie.jouer_a_gauche_ou_a_droite(self, domino_joue) == True:
+
+            cote = input("Le domino {} peut être jouer à gauche ou à droite. Quel côté choisissez vous (g ou d) ?".
+                         format(domino_joue))
+            while True:
+                if cote in "gdGD":
+                    if cote == "g" or cote == "G":
+                        Partie.jouer_a_gauche(self, domino_joue)
+                        break
+                    elif cote == "d" or cote == "D":
+                        Partie.jouer_a_droite(self, domino_joue)
+                        break
+                else:
+                    print("Devez entrer une lettre (g ou d)")
+        else:
+            un_domino = Domino(domino_joue[0], domino_joue[1])
+            if un_domino.__contains__(self.plateau.cote_droit()):
+                Partie.jouer_a_droite(self, domino_joue)
+            elif un_domino.__contains__(self.plateau.cote_gauche()):
+                Partie.jouer_a_gauche(self, domino_joue)
 
     def tour_du_prochain_joueur(self):
         """
         Méthode qui exécute les étapes de jeu pour le tour d'un joueur (à l'exception du premier tour qui a une
         méthode dédiée). Dans cette méthode: 1) on affiche les informations de début de tour, ensuite 2) on teste si
-        le joueur courant peut jouer ou s'il doit passer son tour, 3) s'il peut jouer, on réinitialise l'attribut passe,
-        le joueur joue un domino, et on vérifie s'il y a un gagnant, 4) s'il ne peut pas joueur, on fait passer son tour
+        le joueur courant peut jouer ou s'il doit passer son tour, #3) s'il peut jouer, on réinitialise l'attribut passe,
+        le joueur joue un domino, et on vérifie s'il y a un gagnant, #4) s'il ne peut pas joueur, on fait passer son tour
         au joueur, finalement 4) on passe au prochain joueur (en utilisant la méthode appropriée).
         """
-        #1) on affiche les informations de début de tour
+        #1) affiche les informations de début de tour
         Partie.afficher_informations_debut_tour(self)
+
+        #2)(bool) le joueur courant peut jouer ou s'il doit passer son tour
+        if Partie.determiner_si_joueur_joue_ou_passe(self) == True:
+            #3) s'il peut jouer, on réinitialise l'attribut passe,le joueur joue un domino, eton vérifie s'il y a un gagnant
+            self.passe = 0
+            Partie.jouer_un_domino(self)
+            if Partie.verifier_gagnant(self):
+                self.gagnant = True
+        #4)s'il ne peut pas joueur, on fait passer son tour au joueur, finalement
+        else:
+            self.passe += 1
+
+        #5)on passe au prochain joueur
 
 
     def faire_passer_joueur(self):
@@ -283,8 +337,10 @@ class Partie:
         Méthode qui vérifie si le joueur courant est le gagnant (condition: il doit avoir vidé sa donne). Cette méthode
         modifie l'attibut gagnant si le joueur courant gagne la partie.
         """
-        # TODO: À compléter
-        pass
+        if self.donnes[self.tour - 1].__len__() == 0:
+            self.gagnant = True
+            return True
+
 
     def trouver_joueurs_avec_moins_de_dominos(self):
         """
@@ -317,6 +373,7 @@ class Partie:
         instructions, 2) premier tour de jeu, 3) boucle pour les tours suivants, cette boucle vérifie les conditions de
         fin de partie, 4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
         """
+
         #1) affichage des instructions
         Partie.afficher_instructions()
 
@@ -325,24 +382,12 @@ class Partie:
 
         #3) boucle pour les tours suivants, cette boucle vérifie les conditions de fin de partie
         Partie.tour_du_prochain_joueur(self)
-        print("Quel domino voulez-vous jouer ?\n")
-        for i in range(len(self.donnes[self.tour - 1])):
-            print("{} : {}".format(i, self.donnes[self.tour - 1][i]))
-        entree = True
-        while entree:
-            choix = input("Entre le nombre du domino (entre 0 et {})".format(len(self.donnes[self.tour])-1))
 
-            if choix.isnumeric():
-                if 1 <= int(choix) <= len(self.donnes[self.tour])-1:
-                    entree = False
-                    return int(choix)
-                else:
-                    print(" Entrée invalidée essayez à nouveau ")
-                    entree = True
-            else:
-                print(" Entrée invalidée essayez à nouveau ")
+
 
         #4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
+
           #      afficher_etat_donnes(self)
           #     afficher_message_egalite(self, indices)
           #      afficher_message_victoire
+
