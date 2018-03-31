@@ -90,8 +90,15 @@ class Partie:
         Méthode qui affiche l'état des donnes des joueurs de la partie.
         L'information affichée doit contenir le numéro du joueur et le nombre de dominos de sa donne.
         """
-        # TODO: À compléter
-        pass
+        # le numéro du joueur qui doit jouer
+        print("c'est au tour du joueur {} ".format(self.tour))
+
+        # l'état du plateau de jeu
+        print("Plateau {} ".format(self.plateau))
+
+        # l'état des donnes de tous les joueurs (nombre de dominos en main)
+        for joueur in range(len(self.donnes)):
+            print("le joueur {} a {} dominos en main ".format(joueur + 1, len(self.donnes[joueur])))
 
     def trouver_premier_joueur(self):
         """
@@ -253,10 +260,11 @@ class Partie:
         :param domino_joue: (Domino) Le domino à jouer à gauche du plateau.
         """
         # Afficher l'information sur le mouvement du joueur.
+        print("Le domino {} est placé à gauche".format(domino_joue))
         # Ajouter le domino sur le plateau.
+        self.plateau.ajouter_a_gauche(domino_joue)
         # Retirer le domino de la donne du joueur.
-        # TODO: À compléter
-        pass
+        self.donnes[self.tour - 1].jouer(domino_joue)
 
     def jouer_a_droite(self, domino_joue):
         """
@@ -264,10 +272,11 @@ class Partie:
         :param domino_joue: (Domino) Le domino à jouer à droite du plateau.
         """
         # Afficher l'information sur le mouvement du joueur.
+        print("Le domino {} est placé à droite".format(domino_joue))
         # Ajouter le domino sur le plateau.
+        self.plateau.ajouter_a_droite(domino_joue)
         # Retirer le domino de la donne du joueur.
-        # TODO: À compléter
-        pass
+        self.donnes[self.tour - 1].jouer(domino_joue)
 
     def jouer_un_domino(self):
         """
@@ -322,7 +331,7 @@ class Partie:
             self.passe += 1
 
         #5)on passe au prochain joueur
-
+        Partie.passer_au_prochain_joueur(self)
 
     def faire_passer_joueur(self):
         """
@@ -357,15 +366,28 @@ class Partie:
         qui ont le moins de dominos dans leur donne.
         :param indices: (list) Liste qui contient les numéros des joueurs ayant le moins de dominos dans leur donne.
         """
-        # TODO: À compléter
-        pass
+
+        sorted(indices)
+        m = sorted([[x, i] for i, x in enumerate(indices) if indices.count(x) > 1])
+        n = m[0][0]
+        reg = []
+        string = ""
+        for i in range(len(m)):
+            if n == m[i][0]:
+                reg.append(m[i][1])
+                if i == 0:
+                    string += str(m[i][1])
+                else:
+                    string += " y " + str(m[i][1])
+
+        print("fin de match. Aucun joueur ne peut plus poser de dominos.")
+        print("Il y a égalité entre les joueur {} puisqu'il leir reste le moins de dominos parmis les joueur".format(string))
 
     def afficher_message_victoire(self):
         """
         Méthode qui affiche le message de victoire. Il informe l'usager de l'identité du joueur gagnant.
         """
-        # TODO: À compléter
-        pass
+        print("Felicitation. joueur gagnat")
 
     def jouer(self):
         """
@@ -383,11 +405,13 @@ class Partie:
         #3) boucle pour les tours suivants, cette boucle vérifie les conditions de fin de partie
         Partie.tour_du_prochain_joueur(self)
 
-
-
         #4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
+        #afficher_etat_donnes(self)
+        Partie.afficher_etat_donnes(self)
 
-          #      afficher_etat_donnes(self)
-          #     afficher_message_egalite(self, indices)
-          #      afficher_message_victoire
+        #afficher_message_egalite(self, indices)
+        indices = [x.__len__() for x in self.donnes]
+        Partie.afficher_message_egalite(self, indices)
 
+        #afficher_message_victoire
+        Partie.afficher_message_victoire(self)

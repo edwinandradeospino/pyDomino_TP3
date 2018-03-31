@@ -93,4 +93,5 @@ if __name__ == '__main__':
     # démarrage de la partie
     une_parties.jouer()
 
+
     input('Appuyer sur ENTER pour quitter.')
