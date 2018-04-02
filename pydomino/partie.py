@@ -91,10 +91,7 @@ class Partie:
         L'information affichée doit contenir le numéro du joueur et le nombre de dominos de sa donne.
         """
         # le numéro du joueur qui doit jouer
-        print("c'est au tour du joueur {} ".format(self.tour))
-
-        # l'état du plateau de jeu
-        print("Plateau {} ".format(self.plateau))
+        print("c'est au tour du joueur {} \n".format(self.tour))
 
         # l'état des donnes de tous les joueurs (nombre de dominos en main)
         for joueur in range(len(self.donnes)):
@@ -134,7 +131,7 @@ class Partie:
         self.tour = domino_le_plus_haut[2]
 
         #retourner la valeur du indice(joueur) et le domino le plus haut
-        return (domino_le_plus_haut[2], domino_le_plus_haut[1])
+        return [domino_le_plus_haut[2], domino_le_plus_haut[1]]
 
 
     def passer_au_prochain_joueur(self):
@@ -190,8 +187,11 @@ class Partie:
         autrement.
         """
         # Dans la donne du joueur, y a-t-il un domino que le joueur peut joueur?
+
         for domino in self.donnes[self.tour - 1]:
-            if (self.plateau.cote_gauche() == domino[0]) or (self.plateau.cote_droit() == domino[1]):
+
+            if (self.plateau.cote_gauche() == domino[0]) or (self.plateau.cote_droit() == domino[0]) or \
+                (self.plateau.cote_gauche() == domino[1]) or (self.plateau.cote_droit() == domino[1]):
                 return True
         return False
 
@@ -206,11 +206,11 @@ class Partie:
         print("c'est au tour du joueur {} ".format(self.tour))
 
         #l'état du plateau de jeu
-        print("Plateau {} ".format(self.plateau))
+        print("Plateau : " + self.plateau.__str__())
 
         # l'état des donnes de tous les joueurs (nombre de dominos en main)
         for joueur in range(len(self.donnes)):
-            print("le joueur {} a {} dominos en main ".format(joueur+1, len(self.donnes[joueur])))
+            print("le joueur {} a {} dominos en main ".format(joueur + 1, len(self.donnes[joueur])))
 
         #la donne du joueur qui doit jouer
         print("Donne du jouer {} : {}".format(self.tour, self.donnes[self.tour - 1].__str__()))
@@ -229,9 +229,9 @@ class Partie:
         domino = []
         entree = True
         while entree:
-            choix = input("Entre le nombre du domino (entre 0 et {})".format(len(self.donnes[self.tour]) - 1))
+            choix = input("Entre le nombre du domino (entre 0 et {})".format(len(self.donnes[self.tour - 1])))
             if choix.isnumeric():
-                if 0 <= int(choix) <= len(self.donnes[self.tour]) - 1:
+                if 0 <= int(choix) <= len(self.donnes[self.tour - 1]) - 1:
                     entree = False
                     return self.donnes[self.tour - 1].__getitem__(int(choix))
                 else:
@@ -248,11 +248,8 @@ class Partie:
         :param domino_joue: (Domino) Le domino à jouer
         :return: bool
         """
-        un_domino = Domino(domino_joue[0], domino_joue[1])
-        autre_domino = Domino(self.plateau.cote_gauche(), self.plateau.cote_droit())
-        if un_domino.__eq__(autre_domino):
-            return True
-        return False
+        return sorted([domino_joue[0], domino_joue[1]]) == \
+              sorted([self.plateau.cote_gauche(), self.plateau.cote_droit()])
 
     def jouer_a_gauche(self, domino_joue):
         """
@@ -261,8 +258,10 @@ class Partie:
         """
         # Afficher l'information sur le mouvement du joueur.
         print("Le domino {} est placé à gauche".format(domino_joue))
+
         # Ajouter le domino sur le plateau.
         self.plateau.ajouter_a_gauche(domino_joue)
+
         # Retirer le domino de la donne du joueur.
         self.donnes[self.tour - 1].jouer(domino_joue)
 
@@ -287,7 +286,7 @@ class Partie:
         """
         domino_joue = Partie.demander_numero_domino_a_jouer(self)
 
-        if Partie.jouer_a_gauche_ou_a_droite(self, domino_joue) == True:
+        if Partie.jouer_a_gauche_ou_a_droite(self, domino_joue):
 
             cote = input("Le domino {} peut être jouer à gauche ou à droite. Quel côté choisissez vous (g ou d) ?".
                          format(domino_joue))
@@ -300,9 +299,10 @@ class Partie:
                         Partie.jouer_a_droite(self, domino_joue)
                         break
                 else:
-                    print("Devez entrer une lettre (g ou d)")
+                    print("*** Erreur *** Devez entrer une lettre (g ou d)")
         else:
             un_domino = Domino(domino_joue[0], domino_joue[1])
+
             if un_domino.__contains__(self.plateau.cote_droit()):
                 Partie.jouer_a_droite(self, domino_joue)
             elif un_domino.__contains__(self.plateau.cote_gauche()):
@@ -320,15 +320,17 @@ class Partie:
         Partie.afficher_informations_debut_tour(self)
 
         #2)(bool) le joueur courant peut jouer ou s'il doit passer son tour
-        if Partie.determiner_si_joueur_joue_ou_passe(self) == True:
+        if Partie.determiner_si_joueur_joue_ou_passe(self):
             #3) s'il peut jouer, on réinitialise l'attribut passe,le joueur joue un domino, eton vérifie s'il y a un gagnant
             self.passe = 0
             Partie.jouer_un_domino(self)
-            if Partie.verifier_gagnant(self):
-                self.gagnant = True
+            Partie.verifier_gagnant(self)
+
         #4)s'il ne peut pas joueur, on fait passer son tour au joueur, finalement
         else:
             self.passe += 1
+            print("Le joueur {} ne peut poser aucun domino et doit passer son tour".format(self.donnes.__len__()-1))
+            input("Appuyer sur ENTER pour passer ou jouer suivant")
 
         #5)on passe au prochain joueur
         Partie.passer_au_prochain_joueur(self)
@@ -348,7 +350,6 @@ class Partie:
         """
         if self.donnes[self.tour - 1].__len__() == 0:
             self.gagnant = True
-            return True
 
 
     def trouver_joueurs_avec_moins_de_dominos(self):
@@ -357,8 +358,7 @@ class Partie:
         :return: (list) Liste contenant les numéros des joueurs ayant le moins de dominos dans leur donne. Ce nombre
         peut varier entre 1 et len(self.donnes)
         """
-        # TODO: À compléter
-        pass
+        return [x.__len__() for x in self.donnes]
 
     def afficher_message_egalite(self, indices):
         """
@@ -369,11 +369,11 @@ class Partie:
 
         sorted(indices)
         m = sorted([[x, i] for i, x in enumerate(indices) if indices.count(x) > 1])
-        n = m[0][0]
+        n = m[0][1]
         reg = []
         string = ""
         for i in range(len(m)):
-            if n == m[i][0]:
+            if n == m[i][1]:
                 reg.append(m[i][1])
                 if i == 0:
                     string += str(m[i][1])
@@ -387,7 +387,7 @@ class Partie:
         """
         Méthode qui affiche le message de victoire. Il informe l'usager de l'identité du joueur gagnant.
         """
-        print("Felicitation. joueur gagnat")
+        print(" *** Felicitation. joueur gagnat  ***")
 
     def jouer(self):
         """
@@ -397,21 +397,23 @@ class Partie:
         """
 
         #1) affichage des instructions
-        Partie.afficher_instructions()
+        #Partie.afficher_instructions()
 
         #2) premier tour de jeu
         Partie.tour_du_premier_joueur(self)
 
         #3) boucle pour les tours suivants, cette boucle vérifie les conditions de fin de partie
-        Partie.tour_du_prochain_joueur(self)
+
+        while self.gagnant != True:
+            Partie.tour_du_prochain_joueur(self)
+
+            if self.passe == self.donnes.__len__():
+                indices = Partie.trouver_joueurs_avec_moins_de_dominos(self)
+                Partie.afficher_message_egalite(self, indices)
+                break
 
         #4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
-        #afficher_etat_donnes(self)
         Partie.afficher_etat_donnes(self)
 
-        #afficher_message_egalite(self, indices)
-        indices = [x.__len__() for x in self.donnes]
-        Partie.afficher_message_egalite(self, indices)
-
-        #afficher_message_victoire
+       #5) afficher_message_victoire
         Partie.afficher_message_victoire(self)

@@ -1,4 +1,5 @@
 import pydomino
+from pydomino.domino import *
 
 
 class Plateau:
@@ -17,7 +18,7 @@ class Plateau:
         :return: La valeur extérieure du domino de gauche.
         """
         if self.plateau != []:
-            return(self.plateau[0])
+            return(self.plateau[0][0])
         else:
             return self.plateau
 
@@ -27,7 +28,7 @@ class Plateau:
         :return: La valeur extérieure du domino de droite.
         """
         if self.plateau != []:
-            return self.plateau[-1]
+            return self.plateau[-1][-1]
         else:
             return self.plateau
 
@@ -39,11 +40,15 @@ class Plateau:
         :param domino: (Domino) Le domino à ajouter à gauche.
         """
         if Plateau.cote_gauche(self) == domino[1]:
-            self.plateau[0:0] = domino
+            self.plateau.reverse()
+            self.plateau.append(domino)
+            self.plateau.reverse()
         elif Plateau.cote_gauche(self) == domino[0]:
-            self.plateau[0:0] = reversed(domino)
+            self.plateau.reverse()
+            self.plateau.append(Domino(domino[0], domino[1]).inverser())
+            self.plateau.reverse()
         elif Plateau.cote_gauche(self) == []:
-            self.plateau[0:0] = domino
+            self.plateau.append(domino)
 
     def ajouter_a_droite(self, domino):
         """
@@ -54,7 +59,7 @@ class Plateau:
         if Plateau.cote_droit(self) == domino[0]:
             self.plateau.append(domino)
         elif Plateau.cote_droit(self) == domino[1]:
-            self.plateau.append(reversed(domino))
+            self.plateau.append(Domino(domino[0], domino[1]).inverser())
         else:
             print("Le domino ne correspond pas")
 
@@ -88,7 +93,10 @@ class Plateau:
         Méthode qui retourne une chaîne de caractères qui représente la liste de dominos sur le plateay en une ligne.
         :return: str: liste des dominos du plateau
         """
-        return str(self.plateau)
+        plateau_string = ""
+        for i in self.plateau:
+            plateau_string += "[" + str(i[0]) + "|" + str(i[1]) + "]"
+        return plateau_string
 
     def __repr__(self):
         return str(self)
