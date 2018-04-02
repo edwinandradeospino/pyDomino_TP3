@@ -328,9 +328,8 @@ class Partie:
 
         #4)s'il ne peut pas joueur, on fait passer son tour au joueur, finalement
         else:
-            self.passe += 1
-            print("Le joueur {} ne peut poser aucun domino et doit passer son tour".format(self.donnes.__len__()-1))
-            input("Appuyer sur ENTER pour passer ou jouer suivant")
+
+            Partie.faire_passer_joueur(self)
 
         #5)on passe au prochain joueur
         Partie.passer_au_prochain_joueur(self)
@@ -340,8 +339,9 @@ class Partie:
         Méthode qui contient les instructions à exécuter lorsqu'un joueur doit passer son tour. Cette méthode devrait
         afficher des informations et modifier l'attribut passe.
         """
-        # TODO: À compléter
-        pass
+        self.passe += 1
+        print("Le joueur {} ne peut poser aucun domino et doit passer son tour".format(self.tour))
+        input("Appuyer sur ENTER pour passer ou jouer suivant")
 
     def verifier_gagnant(self):
         """
@@ -369,11 +369,11 @@ class Partie:
 
         sorted(indices)
         m = sorted([[x, i] for i, x in enumerate(indices) if indices.count(x) > 1])
-        n = m[0][1]
+        n = m[0]
         reg = []
         string = ""
         for i in range(len(m)):
-            if n == m[i][1]:
+            if n == m[i]:
                 reg.append(m[i][1])
                 if i == 0:
                     string += str(m[i][1])
@@ -413,7 +413,7 @@ class Partie:
                 break
 
         #4) affichages de fin de partie (état des donnes, message en cas de victoire ou d'égalité)
-        Partie.afficher_etat_donnes(self)
+        #Partie.afficher_etat_donnes(self)
 
        #5) afficher_message_victoire
         Partie.afficher_message_victoire(self)

@@ -2,9 +2,7 @@
 Module contenant la description de la classe Donne. Une donne contient une liste de dominos.
 """
 
-
 import pydomino
-
 
 class Donne:
     """

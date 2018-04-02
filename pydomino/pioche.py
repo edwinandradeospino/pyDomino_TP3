@@ -15,5 +15,9 @@ class Pioche(pydomino.Donne):
         :return:
             (domino): le domino pris dans la pioche
         """
-        # TODO À compléter
-        pass
+        if len(self.dominos) == 0:
+            return []
+        else:
+            return self.dominos[randint(0, (len(self.dominos) - 1))]
+
+

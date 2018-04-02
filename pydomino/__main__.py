@@ -65,11 +65,11 @@ def cree_donnes(type_partie, nombre_joueurs):
      :return:
     """
     if type_partie == 1:
-        une_partie = Partie(Plateau(), distribuer_dominos(nombre_joueurs))
+        une_partie = Partie.nouvelle_partie(nombre_joueurs)
         return une_partie
+
     if type_partie == 2:
-        une_partie = PartieAvecPioche(Plateau(), distribuer_dominos_avec_pioche(nombre_joueurs)[:-1],
-                                      distribuer_dominos_avec_pioche(nombre_joueurs)[-1])
+        une_partie = PartieAvecPioche.nouvelle_partie(nombre_joueurs)
         return une_partie
 
 
@@ -80,18 +80,26 @@ if __name__ == '__main__':
     l'utilisateur à combien de joueur il veut jouer une partie. Un objet de la classe Partie ou de la classe 
     PartieAvecPioche est ensuite instancié. Finalement, la partie est démarrée en appelant la méthode jouer().
     """
-    print("Jouons une partie de pydomino!\n")
-
-    # choix du type de partie
-    type_partie = type_de_partie()
-
-    # combien de joueur il veut jouer une partie
-    nombre_joueurs = nombre_de_parties()
-
-    # créer les donnes des joueurs et instancier les objets
-    une_parties = cree_donnes(type_partie, nombre_joueurs)
-    # démarrage de la partie
-    une_parties.jouer()
 
 
-    input('Appuyer sur ENTER pour quitter.')
+    while True:
+        print("Jouons une partie de pydomino!\n")
+        # choix du type de partie
+        type_partie = type_de_partie()
+
+        # combien de joueur il veut jouer une partie
+        nombre_joueurs = nombre_de_parties()
+
+        # créer les donnes des joueurs et instancier les objets
+        une_parties = cree_donnes(type_partie, nombre_joueurs)
+        # démarrage de la partie
+        une_parties.jouer()
+
+        nouvelle = input("Voulez vous jouer une nouvelle partie (y/n) ?")
+        if nouvelle in "yY":
+            pass
+        else:
+            input('Appuyer sur ENTER pour quitter.')
+            break
+
+
